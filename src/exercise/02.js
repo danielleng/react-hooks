@@ -4,8 +4,6 @@
 import * as React from 'react'
 
 function Greeting({initialName = ''}) {
-  // 🐨 initialize the state to the value from localStorage
-  // 💰 window.localStorage.getItem('name') || initialName
   // const [name, setName] = React.useState(
   //   window.localStorage.getItem('name') || initialName,
   // );
@@ -25,13 +23,17 @@ function Greeting({initialName = ''}) {
   // const [name, setName] = React.useState(() => 
   //   window.localStorage.getItem('name') || initialName);
 
-  // 🐨 Here's where you'll use `React.useEffect`.
-  // The callback should set the `name` in localStorage.
-  // 💰 window.localStorage.setItem('name', name)
-  // Usually use useEffect to interact with the outside world, e.g. localStorage
+  // Usually use useEffect to interact with the outside world, e.g. localStorage.
+  // useEffect is called on every render/re-render.
+  // Extra Credit 02 - Effect Dependencies
+  // useEffect supports a dependencies list as a second argument. 
+  // The Dependencies list is very useful for when synchronising with the outside world
+  //  is expensive, e.g. localStorage or API calls.
+  // The values inside the dependencies list is basically being compared as if you're 
+  //  using a === or Object.is comparison. (so objects won't work)
   React.useEffect(() => {
     window.localStorage.setItem('name', name);
-  });
+  }, [name]);
 
   function handleChange(event) {
     setName(event.target.value)
