@@ -3,6 +3,22 @@
 
 import * as React from 'react'
 
+// Extra Credit 03 - Custom Hooks
+// Custom hooks are functions that uses hooks. It allows reusing hooks
+//  such as useEffect in multiple components.
+// Inside main component, we just use const [name, setName] = useLocalStorageState('name', initialName);
+function useLocalStorageState(key, defaultValue = '') {
+  const [state, setState] = React.useState(
+    () => window.localStorage.getItem(key) || defaultValue,
+  );
+
+  React.useEffect(() => {
+    window.localStorage.setItem(key, state);
+  }, [key, state]);
+
+  return [state, setState];
+}
+
 function Greeting({initialName = ''}) {
   // const [name, setName] = React.useState(
   //   window.localStorage.getItem('name') || initialName,
