@@ -4,20 +4,54 @@
 import * as React from 'react'
 
 // Extra Credit 03 - Custom Hooks
-// Custom hooks are functions that uses hooks. It allows reusing hooks
-//  such as useEffect in multiple components.
-// Inside main component, we just use const [name, setName] = useLocalStorageState('name', initialName);
-function useLocalStorageState(key, defaultValue = '') {
+// Extra Credit 04 - Flexible localStorage hook
+// Custom hooks are functions that uses hooks. 
+// It allows reusing hooks such as useEffect in multiple components.
+// Inside main component, we just use:
+//  const [name, setName] = useLocalStorageState('name', initialName);
+function useLocalStorageState(
+  key, 
+  defaultValue = '',
+  // (EC04) Options object: 
+  //  Allow custom serialize/deserialize functions when accessing/storing in localStorage
+  {serialize = JSON.stringify, deserialize = JSON.parse} = {}) {
   const [state, setState] = React.useState(
-    () => window.localStorage.getItem(key) || defaultValue,
+    // () => window.localStorage.getItem(key) || defaultValue;
+    () => {
+      const valueInLocalStorage = window.localStorage.getItem(key);
+      if (valueInLocalStorage) {
+        return deserialize(valueInLocalStorage);
+      }
+
+      // (EC04) Allow default Value to be a function, e.g. computationally expensive.
+      // If its a function, call it, otherwise return defaultValue.
+      return typeof defaultValue === 'function' ? defaultValue() : defaultValue;
+    }
   );
 
+  // (EC04) What if I want to change the localStorage key without trigger re-render ?
+  // useRef gives me an object that i can mutate without triggering a render.
+  const prevKeyRef = React.useRef(key);
+
   React.useEffect(() => {
-    window.localStorage.setItem(key, state);
-  }, [key, state]);
+    // (EC04) Manage new key here.
+    const prevKey = prevKeyRef.current;
+    if (prevKey !== key) {
+      window.localStorage.removeItem(prevKey);
+    }
+    prevKeyRef.current = key;
+
+    window.localStorage.setItem(key, serialize(state));
+    // Extra Credit 02 - Effect Dependencies
+    // useEffect supports passing in a dependencies list.
+    // The dependencies list allows to specify when the component should rerender. In this case,
+    //  we only re-render when the dependencies list changes: key, serialize, state
+    // 
+  }, [key, serialize, state]);
 
   return [state, setState];
 }
+
 
 function Greeting({initialName = ''}) {
   // const [name, setName] = React.useState(
