@@ -5,14 +5,14 @@ import * as React from 'react'
 
 // Extra Credit 03 - Custom Hooks
 // Extra Credit 04 - Flexible localStorage hook
-// Custom hooks are functions that uses hooks. 
+// Custom hooks are functions that uses hooks.
 // It allows reusing hooks such as useEffect in multiple components.
 // Inside main component, we just use:
 //  const [name, setName] = useLocalStorageState('name', initialName);
 function useLocalStorageState(
-  key, 
+  key,
   defaultValue = '',
-  // (EC04) Options object: 
+  // (EC04) Options object:
   //  Allow custom serialize/deserialize functions when accessing/storing in localStorage
   {serialize = JSON.stringify, deserialize = JSON.parse} = {}) {
   const [state, setState] = React.useState(
@@ -46,7 +46,7 @@ function useLocalStorageState(
     // useEffect supports passing in a dependencies list.
     // The dependencies list allows to specify when the component should rerender. In this case,
     //  we only re-render when the dependencies list changes: key, serialize, state
-    // 
+    //
   }, [key, serialize, state]);
 
   return [state, setState];
@@ -62,24 +62,25 @@ function Greeting({initialName = ''}) {
   // Initializing a function is cheap. So instead of calling React.useState directly
   //  and accessing local storage, we wrap it with a function.
   // In this case, wrapping as a function will allow useState to only
-  //  call that function when it needs to get the initial value.
+  //  call that function when it needs to get the initial value. (During the MOUNT step, "run lazy initializers")
   // We don't always have to use this. E.g. if you're just passing initialName,
   //  then theres no need to create a function.
+  // This function is called a Lazy Initializer.
   function getInitialNameValue() {
     return window.localStorage.getItem('name') || initialName;
   }
   const [name, setName] = React.useState(getInitialNameValue);
   // Alternative arrow function:
-  // const [name, setName] = React.useState(() => 
+  // const [name, setName] = React.useState(() =>
   //   window.localStorage.getItem('name') || initialName);
 
   // Usually use useEffect to interact with the outside world, e.g. localStorage.
   // useEffect is called on every render/re-render.
   // Extra Credit 02 - Effect Dependencies
-  // useEffect supports a dependencies list as a second argument. 
+  // useEffect supports a dependencies list as a second argument.
   // The Dependencies list is very useful for when synchronising with the outside world
   //  is expensive, e.g. localStorage or API calls.
-  // The values inside the dependencies list is basically being compared as if you're 
+  // The values inside the dependencies list is basically being compared as if you're
   //  using a === or Object.is comparison. (so objects won't work)
   React.useEffect(() => {
     window.localStorage.setItem('name', name);
