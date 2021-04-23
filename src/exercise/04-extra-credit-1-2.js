@@ -1,41 +1,10 @@
-// useState: tic tac toe
-// http://localhost:3000/isolated/exercise/04.js
+// Extra Credit 01 and 02 - useState: tic tac toe
+// http://localhost:3000/isolated/exercise/04-extra-credit-1-2.js
 
 import * as React from 'react'
 import {useLocalStorageState} from '../utils'
 
-function Board({onClick, squares}) {
-  function renderSquare(i) {
-    return (
-      <button className="square" onClick={onClick(i)}>
-        {squares[i]}
-      </button>
-    )
-  }
-
-  return (
-    <div>
-      {/* 🐨 put the status in the div below */}
-      <div className="board-row">
-        {renderSquare(0)}
-        {renderSquare(1)}
-        {renderSquare(2)}
-      </div>
-      <div className="board-row">
-        {renderSquare(3)}
-        {renderSquare(4)}
-        {renderSquare(5)}
-      </div>
-      <div className="board-row">
-        {renderSquare(6)}
-        {renderSquare(7)}
-        {renderSquare(8)}
-      </div>
-    </div>
-  )
-}
-
-function Game() {
+function Board() {
   const [squares, setSquares] = useLocalStorageState('squares', Array(9).fill(null));
 
   const nextValue = calculateNextValue(squares);
@@ -57,18 +26,45 @@ function Game() {
     setSquares(Array(9).fill(null));
   }
 
+  function renderSquare(i) {
+    return (
+      <button className="square" onClick={() => selectSquare(i)}>
+        {squares[i]}
+      </button>
+    )
+  }
+
+  return (
+    <div>
+      {/* 🐨 put the status in the div below */}
+      <div className="status">{status}</div>
+      <div className="board-row">
+        {renderSquare(0)}
+        {renderSquare(1)}
+        {renderSquare(2)}
+      </div>
+      <div className="board-row">
+        {renderSquare(3)}
+        {renderSquare(4)}
+        {renderSquare(5)}
+      </div>
+      <div className="board-row">
+        {renderSquare(6)}
+        {renderSquare(7)}
+        {renderSquare(8)}
+      </div>
+      <button className="restart" onClick={restart}>
+        restart
+      </button>
+    </div>
+  )
+}
+
+function Game() {
   return (
     <div className="game">
       <div className="game-board">
-        <Board onClick={selectSquare} squares={squares} />
-        <button className="restart" onClick={restart}>
-          restart
-        </button>
-      </div>
-
-      <div className="game-info">
-        <div>{status}</div>
-        {/* <div>{moves}</div> */}
+        <Board />
       </div>
     </div>
   )
